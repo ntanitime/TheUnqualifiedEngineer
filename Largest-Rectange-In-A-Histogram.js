@@ -1,35 +1,38 @@
 function findLargestRectangle(hist) {
-  var h, pos;
-  var tempH, tempPos;
-  var hStack = [];
-  var posStack = [];
-  var maxSize = -Infinity;
-  var tempSize = 0;
+    var hStack = [];
+    var posStack = [];
+    var maxSize = -Infinity;
 
-  function popThatShit() {
-    tempH = hStack.pop();
-    tempPos = posStack.pop();
-    tempSize = tempH * (pos - tempPos);
-    maxSize = Math.max(tempSize, maxSize);
-  }
-
-  for (pos = 0; pos < hist.length; pos++) {
-    h = hist[pos];
-    if (hStack.length === 0 || h > hStack[hStack.length - 1]) {
-      hStack.push(h);
-      posStack.push(pos);
-    } else if (h < hStack[hStack.length - 1]) {
-      while (hStack.length && h < hStack[hStack.length - 1]) {
-        popThatShit();
-      }
-      hStack.push(h);
-      posStack.push(tempPos);
+    function popThatShit(pos) {
+        let tempH = hStack.pop();
+        let tempPos = posStack.pop();
+        let tempSize = tempH * (pos - tempPos);
+        maxSize = Math.max(tempSize, maxSize);
+        return tempPos;
     }
-  }
-  while (hStack.length) {
-    popThatShit();
-  }
-  return maxSize;
+
+    for (let i = 0; i < hist.length; i++) {
+        let h = hist[i];
+
+        if (hStack.length === 0 || h > hStack[hStack.length - 1]) {
+            hStack.push(h);
+            posStack.push(i);
+        } else if (h < hStack[hStack.length - 1]) {
+            let lastPosition;
+            while (hStack.length && h <= hStack[hStack.length - 1]) {
+                lastPosition = popThatShit(i);
+            }
+
+            hStack.push(h);
+            posStack.push(lastPosition);
+        }
+    }
+
+    while (hStack.length) {
+        popThatShit(hist.length);
+    }
+
+    return maxSize;
 }
 
 function test(hist, answer) {
